@@ -8,6 +8,8 @@ access the container via root ssh or mount each user's key in
 
 Optionally mount a custom sshd config at `/etc/ssh/`.
 
+**Note**: This is a fork of https://github.com/panubo/docker-sshd meant to be used with Windows hosts.  The reason is that with a Windows host, the permissions of `.ssh/authorized_keys` will be wrong, since you can't change the permissions of mounted files.  This fork just copies all files from `/root/.ssh-staging` to `/root/.ssh`, so they can have the correct permissions.
+
 ## Environment Options
 
 - `SSH_USERS` list of user accounts and uids/gids to create. eg `SSH_USERS=www:48:48,admin:1000:1000`
@@ -30,6 +32,13 @@ When in sftp only mode (activated by setting `SFTP_MODE=true` the container will
 Please note that all components of the pathname in the ChrootDirectory directive must be root-owned directories that are not writable by any other user or group (see man 5 sshd_config).
 
 ## Usage Example
+
+```
+docker build -t mysshd .
+docker run --rm -p 2222:22 -v $HOME/.ssh/id_rsa.pub:/root/.ssh-staging/authorized_keys -v myvol:/data/ -v etcssh:/etc/ssh mysshd
+```
+
+or
 
 ```
 docker run -d -p 2222:22 -v /secrets/id_rsa.pub:/root/.ssh/authorized_keys -v /mnt/data/:/data/ docker.io/panubo/sshd

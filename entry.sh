@@ -48,6 +48,12 @@ else
     print_fingerprints /etc/ssh/keys
 fi
 
+# Stage in .ssh to get correct permissions on windows hosts
+if [ -e ~/.ssh-staging/* ]; then
+    echo ">> Staging configuration"
+    cp -r ~/.ssh-staging/* ~/.ssh/
+fi
+
 # Fix permissions, if writable
 if [ -w ~/.ssh ]; then
     chown root:root ~/.ssh && chmod 700 ~/.ssh/
